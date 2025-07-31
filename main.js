@@ -47,6 +47,8 @@ async function getData(city) {
   const feels = data.currentConditions.feelslike;
   const translated = toC(feels);
 
+  if (!data) return;
+
   return {
     location: data.resolvedAddress,
     conditions: data.currentConditions.conditions,
@@ -90,4 +92,10 @@ searchBtn.addEventListener("click", async () => {
 
 document.querySelectorAll('input[name="unit"]').forEach((unit) => {
   unit.addEventListener("change", updateDisplay);
+});
+
+inp.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    searchBtn.click();
+  }
 });
