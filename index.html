@@ -10,8 +10,16 @@
     <div class="flex-container">
       <h1>Weather App</h1>
       <div class="card">
-        <input id="inp" type="text" placeholder="Enter a city..." />
-        <button id="searchBtn">Search</button>
+        <div class="input">
+          <input id="inp" type="text" placeholder="Enter a city..." />
+          <button id="searchBtn">Search</button>
+        </div>
+        <div class="radios">
+          <label for="F">F°</label>
+          <input type="radio" name="unit" id="F" value="f" />
+          <label for="C">C°</label>
+          <input type="radio" name="unit" id="C" value="c" checked />
+        </div>
         <div id="output"></div>
       </div>
     </div>

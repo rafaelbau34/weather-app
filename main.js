@@ -2,7 +2,7 @@ const inp = document.getElementById("inp");
 const output = document.getElementById("output");
 const searchBtn = document.getElementById("searchBtn");
 
-output.classList.add("out");
+let lastWeatherData = null;
 
 async function searchCity(city) {
   try {
@@ -19,30 +19,50 @@ async function searchCity(city) {
     }
 
     return weatherData;
-  } catch (error) {
-    alert(error);
+  } catch {
+    alert("This place doesn't exist. At least not in our database.");
   }
+}
+
+function toC(f) {
+  return ((f - 32) * 5) / 9;
 }
 
 async function getData(city) {
   const data = await searchCity(city);
+  const f = data.currentConditions.temp;
+  const c = toC(f);
+
   return {
     location: data.resolvedAddress,
     conditions: data.currentConditions.conditions,
-    temp: data.currentConditions.temp,
+    tempF: f.toFixed(1),
+    tempC: c.toFixed(1),
   };
+}
+
+function updateDisplay() {
+  if (!lastWeatherData) return;
+
+  const unit = document.querySelector('input[name="unit"]:checked').value;
+  const temp =
+    unit === "c"
+      ? `${lastWeatherData.tempC} C°`
+      : `${lastWeatherData.tempF} F°`;
+  output.innerHTML = `
+        <h2>${lastWeatherData.location}</h2>
+        <p>Temperature: ${temp}</p>
+        <p>Conditions: ${lastWeatherData.conditions}</p>
+        `;
 }
 
 searchBtn.addEventListener("click", async () => {
   const searchCiu = inp.value.trim();
-  if (searchCiu) {
-    const weather = await getData(searchCiu);
-    if (weather) {
-      output.innerHTML = `
-        <h2>${weather.location}</h2>
-        <p>Temperature: ${weather.temp}</p>
-        <p>Conditions: ${weather.conditions}</p>
-        `;
-    }
-  }
+  if (!searchCiu) return;
+  lastWeatherData = await getData(searchCiu);
+  updateDisplay();
+});
+
+document.querySelectorAll('input[name="unit"]').forEach((unit) => {
+  unit.addEventListener("change", updateDisplay);
 });
